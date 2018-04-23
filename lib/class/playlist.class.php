@@ -456,6 +456,20 @@ class Playlist extends playlist_object
      */
     public function delete_track($id)
     {
+// CUSTOM PART FROM JONES TO REMOVE LINE FROM PLAYLISTFILE.M3U //
+        $playlistid = $this->id;
+        // get song id
+        $sql = "SELECT `object_id` FROM `playlist_data` WHERE `playlist_data`.`playlist` = ? AND `playlist_data`.`id` = ? LIMIT 1";
+        $db_results = Dba::read($sql, array($playlistid, $id));
+        while ($row = Dba::fetch_assoc($db_results)) {
+            $songid = $row['object_id'];
+            break;
+        }
+        // delete song from playlistfile and from database
+        $action = "delete";
+        shell_exec("php /primary/scripts/updatePlaylists.php $action $playlistid $songid 2>&1 >> /primary/scripts/logs/updatePlaylists.log");
+// END OF CUSTOM PART //
+
         $sql = "DELETE FROM `playlist_data` WHERE `playlist_data`.`playlist` = ? AND `playlist_data`.`id` = ? LIMIT 1";
         Dba::write($sql, array($this->id, $id));
         
