@@ -414,6 +414,14 @@ class Playlist extends playlist_object
                 $sql = "INSERT INTO `playlist_data` (`playlist`,`object_id`,`object_type`,`track`) " .
                     " VALUES (?, ?, ?, ?)";
                 Dba::write($sql, array($this->id, $data['object_id'], $data['object_type'], $track));
+                
+// CUSTOM PART FROM JONES FOR ADDING TRACKS TO PLAYLISTFILES TOO //
+                $action = "add";
+                $tracksjson = json_encode($media);
+                $playlistid = $this->id;
+                $songid = $data['object_id'];
+                shell_exec("php /primary/scripts/updatePlaylists.php $action $playlistid $songid 2>&1 >> /primary/scripts/logs/updatePlaylists.log");
+// END OF CUSTOM PART //
             } // if valid id
         } // end foreach medias
 
